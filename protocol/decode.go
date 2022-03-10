@@ -1,6 +1,9 @@
 package protocol
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 func SignResp(pkg []byte) *loginResp {
 	start := pkg[0]
@@ -12,7 +15,7 @@ func SignResp(pkg []byte) *loginResp {
 	postByte := make([]byte, len(pkg[6:13]))
 	copy(postByte, pkg[6:13])
 	removeZero(&postByte)
-	postSn := string(postByte)
+	postSn := fmt.Sprintf("%X", postByte)
 
 	result := pkg[13]
 	var success bool
