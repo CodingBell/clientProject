@@ -21,7 +21,6 @@ func SelectRequestMethod(req *protocol.LoginReq) {
 	//case 0x11:
 	//	result = p.Authority(p.MessageBody)
 	//}
-
 	// return message to server
 	conn, err := createClient("tcp", "localhost", "9999")
 	defer conn.Close()
@@ -35,7 +34,6 @@ func SelectRequestMethod(req *protocol.LoginReq) {
 		return
 	}
 	conn.Close()
-
 }
 
 func createClient(protoType, address, port string) (client net.Conn, err error) {

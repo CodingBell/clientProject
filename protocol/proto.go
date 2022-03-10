@@ -1,14 +1,27 @@
 package protocol
 
 type Protocol struct {
-	FrameHeader   [4]byte
-	MessageHeader [8]byte
+	FrameHeader   *[]byte
+	MessageHeader *[]byte
 	MessageBody   *[]byte
-	FrameTail     [4]byte
+	FrameTail     *[]byte
 }
 
-func NewProtocol(frameHeader [4]byte,
-	messageHeader [8]byte, messageBody *[]byte, frameTail [4]byte) *Protocol {
-	return &Protocol{FrameHeader: frameHeader, MessageHeader: messageHeader,
-		MessageBody: messageBody, FrameTail: frameTail}
+func NewProtocol(frameHeader *[]byte,
+	messageHeader *[]byte,
+	messageBody *[]byte,
+	frameTail *[]byte) *Protocol {
+	return &Protocol{FrameHeader: frameHeader,
+		MessageHeader: messageHeader,
+		MessageBody:   messageBody,
+		FrameTail:     frameTail}
+}
+
+func (p *Protocol) getFrame() []byte {
+	result := make([]byte, 0)
+	result = append(result, *p.FrameHeader...)
+	result = append(result, *p.MessageHeader...)
+	result = append(result, *p.MessageBody...)
+	result = append(result, *p.FrameTail...)
+	return result
 }
