@@ -1,5 +1,11 @@
 package protocol
 
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
 type CSType int
 
 const (
@@ -52,11 +58,59 @@ func NewLoginReq() *LoginReq {
 		sn:                 "55031412782305",
 		csType:             DC,
 		gunNumber:          2,
-		protocolVersion:    "V1.4",
+		protocolVersion:    "V1.0",
 		programmingVersion: "v1.0.1",
 		netType:            SIM,
 		sim:                "01010101010101010101",
 		operator:           TELECOM}
+}
+
+func (l *LoginReq) getSN() []byte {
+	step, i := convertStringToByte(l.sn)
+	if i = 7 - i; i > 0 {
+		addZero(&step, i)
+	}
+	return step
+}
+
+func (l *LoginReq) getCSType() byte {
+	return getHex(int(l.csType))
+}
+
+func (l *LoginReq) getGunNumber() byte {
+	return getHex(l.gunNumber)
+}
+
+func (l *LoginReq) getTenMultiVersion() (result byte) {
+	str := strings.Split(l.protocolVersion, "V")[1]
+	fl, _ := strconv.ParseFloat(str, 64)
+	result = getHex(int(fl * 10))
+	return
+}
+
+func (l *LoginReq) getAsciiToByte() []byte {
+	str := fmt.Sprintf("%X", []byte(l.programmingVersion))
+	step, i := convertStringToByte(str)
+	if i = 8 - i; i > 0 {
+		addZero(&step, i)
+	}
+	return step
+}
+
+func (l *LoginReq) getNetType() byte {
+	return byte(l.netType)
+}
+
+func (l *LoginReq) getSim() []byte {
+	step, i := convertStringToByte(l.sim)
+	if i = 10 - i; i > 0 {
+		addZero(&step, i)
+	}
+	return step
+}
+
+func (l *LoginReq) getOperator() byte {
+	return byte(l.operator)
 }
 
 //func SelectRequestMethod(p *Protocol) {
