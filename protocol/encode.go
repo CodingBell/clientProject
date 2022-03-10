@@ -8,23 +8,23 @@ import (
 )
 
 func SignIn(req *LoginReq) []byte {
-	bytes := make([]byte, 0)
-	bytes = append(bytes, 0x68,
+	pkg := make([]byte, 0)
+	pkg = append(pkg, 0x68,
 		0x22,
 		0x00,
 		0x00,
 		0x00,
 		0x01)
-	bytes = append(bytes, getSN(req.sn)...)
-	bytes = append(bytes, getHex(int(req.csType)),
+	pkg = append(pkg, getSN(req.sn)...)
+	pkg = append(pkg, getHex(int(req.csType)),
 		getHex(req.gunNumber),
 		getTenMultiVersion(req.protocolVersion),
 	)
-	bytes = append(bytes, getAsciiToByte(req.programmingVersion)...)
-	bytes = append(bytes, byte(req.netType))
-	bytes = append(bytes, getSim(req.sim)...)
-	bytes = append(bytes, byte(req.operator))
-	return bytes
+	pkg = append(pkg, getAsciiToByte(req.programmingVersion)...)
+	pkg = append(pkg, byte(req.netType))
+	pkg = append(pkg, getSim(req.sim)...)
+	pkg = append(pkg, byte(req.operator))
+	return pkg
 }
 
 func getSN(sn string) []byte {
