@@ -6,6 +6,12 @@ import (
 	"strings"
 )
 
+type Header struct {
+	Start  byte
+	Length int
+	MsgID  []byte
+}
+
 type CSType int
 
 const (
@@ -110,4 +116,17 @@ func (l *LoginReq) getSim() []byte {
 
 func (l *LoginReq) getOperator() byte {
 	return byte(l.operator)
+}
+
+// 登录认证应答
+type loginResp struct {
+	id int
+	// 桩编号
+	sn string
+	// 登录结果
+	success bool
+}
+
+func newLoginResp(id int, sn string, success bool) *loginResp {
+	return &loginResp{id: id, sn: sn, success: success}
 }

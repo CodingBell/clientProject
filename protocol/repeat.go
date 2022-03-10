@@ -31,6 +31,6 @@ func addZero(b *[]byte, n int) {
 	}
 }
 
-func removeZero(b []byte) {
-	bytes.TrimRight(b, "\x00")
+func removeZero(b *[]byte) {
+	bytes.TrimRight(*b, "\x00")
 }
