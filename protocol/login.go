@@ -1,44 +1,14 @@
 package protocol
 
 import (
+	"errors"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 )
 
-type Header struct {
-	Start  byte
-	Length int
-	MsgID  []byte
-}
-
-type CSType int
-
-const (
-	// 直流
-	DC CSType = 0
-	// 交流
-	AC CSType = 1
-)
-
-type NetType byte
-
-const (
-	SIM       NetType = 0x00
-	LAN       NetType = 0x01
-	WAN       NetType = 0x02
-	NET_OTHER NetType = 0x03
-)
-
-type OperatorType byte
-
-const (
-	MOBILE         OperatorType = 0x00
-	TELECOM        OperatorType = 0x02
-	UNICOM         OperatorType = 0x03
-	OPERATOR_OTHER OperatorType = 0x04
-)
-
+// 登录认证请求
 type LoginReq struct {
 	id int
 	// 桩编码
@@ -69,6 +39,48 @@ func NewLoginReq() *LoginReq {
 		netType:            SIM,
 		sim:                "01010101010101010101",
 		operator:           TELECOM}
+}
+
+func (l *LoginReq) Len() int {
+	return 0x22
+}
+
+func (l *LoginReq) MsgID() int {
+	return l.id
+}
+
+func (l *LoginReq) Action() byte {
+	return LoginReqType
+}
+
+func (l *LoginReq) IsRequest() bool {
+	return true
+}
+
+func (l *LoginReq) Marshal() []byte {
+	pkg := make([]byte, 0)
+
+	pkg = append(pkg, 0x68,
+		0x22,
+		0x00,
+		0x00,
+		0x00,
+		0x01)
+
+	pkg = append(pkg, l.getSN()...)
+	pkg = append(pkg, l.getCSType(),
+		l.getGunNumber(),
+		l.getTenMultiVersion(),
+	)
+	pkg = append(pkg, l.getAsciiToByte()...)
+	pkg = append(pkg, l.getNetType())
+	pkg = append(pkg, l.getSim()...)
+	pkg = append(pkg, l.getOperator())
+	return pkg
+}
+
+func (l *LoginReq) UnMarshal(bytes []byte) error {
+	return nil
 }
 
 func (l *LoginReq) getSN() []byte {
@@ -129,4 +141,53 @@ type loginResp struct {
 
 func newLoginResp(id int, sn string, success bool) *loginResp {
 	return &loginResp{id: id, sn: sn, success: success}
+}
+
+func (l *loginResp) Len() int {
+	return 0x0C
+}
+
+func (l *loginResp) MsgID() int {
+	return l.id
+}
+
+func (l *loginResp) Action() byte {
+	return LoginRespType
+}
+
+func (l *loginResp) IsRequest() bool {
+	return false
+}
+
+func (l *loginResp) Marshal() []byte {
+	return nil
+}
+
+func (l *loginResp) UnMarshal(pkg []byte) error {
+	start := pkg[0]
+	if start != 0x68 {
+		log.Println("数据格式错误")
+		return errors.New("数据格式错误")
+	}
+
+	postByte := make([]byte, len(pkg[6:13]))
+	copy(postByte, pkg[6:13])
+	removeZero(&postByte)
+	postSn := fmt.Sprintf("%X", postByte)
+
+	result := pkg[13]
+	var success bool
+	if result != 0x00 && result != 0x01 {
+		log.Println("登录结果格式错误")
+		return errors.New("登录结果格式错误")
+	}
+	if result == 0x00 {
+		success = true
+	} else {
+		success = false
+	}
+	l.id = 4
+	l.sn = postSn
+	l.success = success
+	return nil
 }

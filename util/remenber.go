@@ -1,4 +1,4 @@
-package protocol
+package util
 
 type Protocol struct {
 	FrameHeader   *[]byte
