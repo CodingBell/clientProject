@@ -81,11 +81,10 @@ func (l *LoginReq) getGunNumber() byte {
 	return getHex(l.gunNumber)
 }
 
-func (l *LoginReq) getTenMultiVersion() (result byte) {
+func (l *LoginReq) getTenMultiVersion() byte {
 	str := strings.Split(l.protocolVersion, "V")[1]
 	fl, _ := strconv.ParseFloat(str, 64)
-	result = getHex(int(fl * 10))
-	return
+	return getHex(int(fl * 10))
 }
 
 func (l *LoginReq) getAsciiToByte() []byte {
@@ -112,41 +111,3 @@ func (l *LoginReq) getSim() []byte {
 func (l *LoginReq) getOperator() byte {
 	return byte(l.operator)
 }
-
-//func SelectRequestMethod(p *Protocol) {
-//	messageHear := p.MessageHeader
-//	if messageHear[0] != 0x68 {
-//		log.Fatal("the message is not a request type")
-//		return
-//	}
-//	var result string
-//	switch messageHear[1] {
-//	// login to sign in
-//	case 0x10:
-//		result = p.SignIn(p.MessageBody)
-//	// authority
-//	case 0x11:
-//		result = p.Authority(p.MessageBody)
-//	}
-//
-//	// return message to server
-//	conn, err := createClient("tcp", "localhost", "9999")
-//	defer conn.Close()
-//	if err != nil {
-//		log.Fatal("there is no server")
-//		return
-//	}
-//	_, err = conn.Write([]byte(result))
-//	if err != nil {
-//		log.Fatal("the server is failed")
-//		return
-//	}
-//	conn.Close()
-//
-//}
-//
-//func createClient(protoType, address, port string) (client net.Conn, err error) {
-//	location := address + ":" + port
-//	client, err = net.Dial(protoType, location)
-//	return
-//}
