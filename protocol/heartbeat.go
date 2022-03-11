@@ -106,14 +106,20 @@ func (h *HeartbeatResp) Marshal() []byte {
 }
 
 func (h *HeartbeatResp) UnMarshal(pkg []byte) error {
+	h.setID(pkg[2:4])
 	mid := make([]byte, len(pkg[6:13]))
 	copy(mid, pkg[6:13])
 	removeZero(&mid)
 	sn := fmt.Sprintf("%X", mid)
+
 	h.setSN(sn)
 	h.setGunNumber(pkg[13])
 	h.setHeartbeatReply()
 	return nil
+}
+
+func (h *HeartbeatResp) setID(pkg []byte) {
+	h.id = decodeSequence(pkg)
 }
 
 func (h *HeartbeatResp) setSN(sn string) {

@@ -29,7 +29,27 @@ type LoginReq struct {
 	operator OperatorType
 }
 
-func NewLoginReq() *LoginReq {
+func NewLoginReq(id int,
+	sn string,
+	csType CSType,
+	gunNumber int,
+	protocolVersion string,
+	programmingVersion string,
+	netType NetType,
+	sim string,
+	operator OperatorType) *LoginReq {
+	return &LoginReq{id: id,
+		sn:                 sn,
+		csType:             csType,
+		gunNumber:          gunNumber,
+		protocolVersion:    protocolVersion,
+		programmingVersion: programmingVersion,
+		netType:            netType,
+		sim:                sim,
+		operator:           operator}
+}
+
+func NewLoginReqTest() *LoginReq {
 	return &LoginReq{id: 1,
 		sn:                 "55031412782305",
 		csType:             DC,
@@ -61,18 +81,14 @@ func (l *LoginReq) Marshal() []byte {
 	pkg := make([]byte, 0)
 
 	pkg = append(pkg, 0x68,
-		0x22,
-		0x00,
-		0x00,
-		0x00,
-		0x01)
-
+		l.getLen())
+	pkg = append(pkg, l.getID()...)
+	pkg = append(pkg, 0x00, 0x01)
 	pkg = append(pkg, l.getSN()...)
 	pkg = append(pkg, l.getCSType(),
 		l.getGunNumber(),
-		l.getTenMultiVersion(),
-	)
-	pkg = append(pkg, l.getAsciiToByte()...)
+		l.getProtocolVersion())
+	pkg = append(pkg, l.getProgrammingVersion()...)
 	pkg = append(pkg, l.getNetType())
 	pkg = append(pkg, l.getSim()...)
 	pkg = append(pkg, l.getOperator())
@@ -95,13 +111,13 @@ func (l *LoginReq) getGunNumber() byte {
 	return getHex(l.gunNumber)
 }
 
-func (l *LoginReq) getTenMultiVersion() byte {
+func (l *LoginReq) getProtocolVersion() byte {
 	str := strings.Split(l.protocolVersion, "V")[1]
 	fl, _ := strconv.ParseFloat(str, 64)
 	return getHex(int(fl * 10))
 }
 
-func (l *LoginReq) getAsciiToByte() []byte {
+func (l *LoginReq) getProgrammingVersion() []byte {
 	str := fmt.Sprintf("%X", []byte(l.programmingVersion))
 	step, i := convertStringToByte(str)
 	if i = 8 - i; i > 0 {
@@ -124,6 +140,16 @@ func (l *LoginReq) getSim() []byte {
 
 func (l *LoginReq) getOperator() byte {
 	return byte(l.operator)
+}
+
+func (l *LoginReq) getLen() byte {
+	return byte(l.Len())
+}
+
+func (l *LoginReq) getID() []byte {
+	strID := fmt.Sprintf("%04X", l.id)
+	id, _ := convertStringToByte(strID)
+	return id
 }
 
 // 登录认证应答
@@ -165,11 +191,12 @@ func (l *loginResp) UnMarshal(pkg []byte) error {
 		log.Println("数据格式错误")
 		return errors.New("数据格式错误")
 	}
+	l.setID(pkg[2:4])
 	postByte := make([]byte, len(pkg[6:13]))
 	copy(postByte, pkg[6:13])
 	removeZero(&postByte)
 	postSn := fmt.Sprintf("%X", postByte)
-
+	l.setSN(postSn)
 	result := pkg[13]
 	var success bool
 	if result != 0x00 && result != 0x01 {
@@ -181,8 +208,18 @@ func (l *loginResp) UnMarshal(pkg []byte) error {
 	} else {
 		success = false
 	}
-	l.id = 4
-	l.sn = postSn
-	l.success = success
+	l.setSuccess(success)
 	return nil
+}
+
+func (l *loginResp) setID(id []byte) {
+	l.id = decodeSequence(id)
+}
+
+func (l *loginResp) setSN(sn string) {
+	l.sn = sn
+}
+
+func (l *loginResp) setSuccess(su bool) {
+	l.success = su
 }

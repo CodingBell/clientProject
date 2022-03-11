@@ -13,8 +13,14 @@ func main() {
 	//resultj, j := convertStringToByte(result)
 	//fmt.Printf("%X %d", resultj, j)
 
-	var tr byte = 0xA
-	fmt.Println(int(tr))
+	//var tr byte = 0xA
+	//fmt.Println(int(tr))
+
+	var id = []byte{0x01, 0x12}
+	fmt.Println(id[0:2])
+	//str := fmt.Sprintf("%X", id)
+	//intID, _ := strconv.ParseInt(str, 16, 32)
+	//fmt.Println(intID)
 
 	//pkg := []byte{
 	//	0x68,

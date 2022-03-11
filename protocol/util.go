@@ -42,3 +42,9 @@ func encodeSN(sn string) []byte {
 	}
 	return step
 }
+
+func decodeSequence(seq []byte) int {
+	str := fmt.Sprintf("%X", seq)
+	intID, _ := strconv.ParseInt(str, 16, 32)
+	return int(intID)
+}
