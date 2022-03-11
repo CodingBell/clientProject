@@ -3,14 +3,22 @@ package protocol
 import "fmt"
 
 type HeartbeatReq struct {
-	id     int
-	sn     string
-	conn   int
-	status ConnStatus
+	id        int
+	sn        string
+	gunNumber int
+	status    ConnStatus
 }
 
-func NewHeartbeatReq(id int, sn string, conn int, status ConnStatus) *HeartbeatReq {
-	return &HeartbeatReq{id: id, sn: sn, conn: conn, status: status}
+func NewHeartbeatReq(id int, sn string, gunNumber int, status ConnStatus) *HeartbeatReq {
+	return &HeartbeatReq{id: id, sn: sn, gunNumber: gunNumber, status: status}
+}
+
+func NewHeartbeatReqTest() *HeartbeatReq {
+	return &HeartbeatReq{
+		id:        2,
+		sn:        "55031412782305",
+		gunNumber: 3,
+		status:    Faulted}
 }
 
 func (h *HeartbeatReq) Len() int {
@@ -35,9 +43,11 @@ func (h *HeartbeatReq) Marshal() []byte {
 		0x68,
 		h.getLen())
 	pkg = append(pkg, h.getID()...)
+	pkg = append(pkg, 0x00, 0x03)
 	pkg = append(pkg, h.getType())
 	pkg = append(pkg, h.getSN()...)
-	pkg = append(pkg, h.getStatus(),
+	pkg = append(pkg, h.getGunNumber(),
+		h.getStatus(),
 		0x68,
 		0x90)
 	return pkg
@@ -63,6 +73,10 @@ func (h *HeartbeatReq) getType() byte {
 
 func (h *HeartbeatReq) getSN() []byte {
 	return encodeSN(h.sn)
+}
+
+func (h *HeartbeatReq) getGunNumber() byte {
+	return getHex(h.gunNumber)
 }
 
 func (h *HeartbeatReq) getStatus() byte {

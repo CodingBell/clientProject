@@ -16,6 +16,10 @@ type MyConn struct {
 	timer  *time.Ticker
 }
 
+func (m *MyConn) Send(msg []byte) {
+	m.myChan <- msg
+}
+
 func NewConn(protoType, address, port string) (*MyConn, error) {
 	conn, err := createClient(protoType, address, port)
 	if err != nil {
@@ -27,6 +31,8 @@ func NewConn(protoType, address, port string) (*MyConn, error) {
 		myChan: make(chan []byte, 1),
 		timer:  time.NewTicker(5 * time.Second),
 	}
+	go m.Write()
+	go m.Read()
 	return m, nil
 }
 
@@ -34,6 +40,18 @@ func createClient(protoType, address, port string) (client net.Conn, err error) 
 	location := address + ":" + port
 	client, err = net.Dial(protoType, location)
 	return
+}
+
+func (m *MyConn) Read() {
+	pkg := make([]byte, 256)
+	for {
+		_, err := m.conn.Read(pkg)
+		if err != nil {
+			log.Println(err)
+			break
+		}
+
+	}
 }
 
 //func (m *MyConn) ProcessMessage(protoType, address, port string, proto protocol.Proto) error {
@@ -49,19 +67,6 @@ func createClient(protoType, address, port string) (client net.Conn, err error) 
 //		go m.Read()
 //	}
 //}
-
-func (m *MyConn) Read() {
-	pkg := make([]byte, 256)
-	for {
-		_, err := m.conn.Read(pkg)
-		if err != nil {
-			log.Println(err)
-			break
-		}
-		// todo 处理协议数据
-	}
-}
-
 func (m *MyConn) Write() {
 	for {
 		select {
@@ -73,6 +78,7 @@ func (m *MyConn) Write() {
 			}
 		case <-m.timer.C:
 			// todo 心跳
+			m.conn.Write([]byte("ping"))
 		}
 	}
 }
