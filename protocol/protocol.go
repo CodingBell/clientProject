@@ -43,6 +43,12 @@ const (
 	Faulted ConnStatus = 0x01
 )
 
+type HeartbeatReplyType byte
+
+const (
+	COMMON HeartbeatReplyType = 0x00
+)
+
 type Header struct {
 	Start   byte   // 起始标志 1个字节 固定0x68
 	Length  int    // 长度 1个字节 不超过200
