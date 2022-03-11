@@ -34,3 +34,11 @@ func addZero(b *[]byte, n int) {
 func removeZero(b *[]byte) {
 	bytes.TrimRight(*b, "\x00")
 }
+
+func encodeSN(sn string) []byte {
+	step, i := convertStringToByte(sn)
+	if i = 7 - i; i > 0 {
+		addZero(&step, i)
+	}
+	return step
+}

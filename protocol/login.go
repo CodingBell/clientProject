@@ -84,11 +84,7 @@ func (l *LoginReq) UnMarshal(bytes []byte) error {
 }
 
 func (l *LoginReq) getSN() []byte {
-	step, i := convertStringToByte(l.sn)
-	if i = 7 - i; i > 0 {
-		addZero(&step, i)
-	}
-	return step
+	return encodeSN(l.sn)
 }
 
 func (l *LoginReq) getCSType() byte {
@@ -169,7 +165,6 @@ func (l *loginResp) UnMarshal(pkg []byte) error {
 		log.Println("数据格式错误")
 		return errors.New("数据格式错误")
 	}
-
 	postByte := make([]byte, len(pkg[6:13]))
 	copy(postByte, pkg[6:13])
 	removeZero(&postByte)
