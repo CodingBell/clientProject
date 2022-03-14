@@ -1,5 +1,7 @@
 package protocol
 
+import "fmt"
+
 type ComputeModelReq struct {
 	id int
 	// 桩编号
@@ -36,7 +38,9 @@ func (c *ComputeModelReq) Marshal() []byte {
 	pkg := make([]byte, 0)
 	pkg = append(pkg, 0x68,
 		c.getLen())
-	pkg =
+	pkg = append(pkg, c.getID()...)
+	pkg = append(pkg, 0x00, 0x05)
+	return pkg
 }
 
 func (c *ComputeModelReq) UnMarshal(bytes []byte) error {
@@ -48,5 +52,7 @@ func (c *ComputeModelReq) getLen() byte {
 }
 
 func (c *ComputeModelReq) getID() []byte {
-
+	step := fmt.Sprintf("%04X", c.MsgID())
+	result, _ := convertStringToByte(step)
+	return result
 }
