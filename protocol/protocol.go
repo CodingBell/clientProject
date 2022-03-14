@@ -1,10 +1,11 @@
 package protocol
 
 const (
-	LoginReqType      = 0x01
-	LoginRespType     = LoginReqType + 1
-	HeartbeatReqType  = LoginRespType + 1
-	HeartbeatRespType = HeartbeatReqType + 1
+	LoginReqType        = 0x01
+	LoginRespType       = LoginReqType + 1
+	HeartbeatReqType    = LoginRespType + 1
+	HeartbeatRespType   = HeartbeatReqType + 1
+	ComputeModelReqType = HeartbeatRespType + 1
 )
 
 type CSType int
@@ -47,6 +48,13 @@ type HeartbeatReplyType byte
 
 const (
 	COMMON HeartbeatReplyType = 0x00
+)
+
+type ComputeModelType byte
+
+const (
+	FIRSTCONN ComputeModelType = 0x00
+	OTHERCONN ComputeModelType = 0x01
 )
 
 type Header struct {
