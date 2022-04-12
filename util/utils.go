@@ -38,11 +38,12 @@ func GetBytes(str []string) []byte {
 	return result
 }
 
-func addHeadAndTail(ty byte, b []byte) {
+func addHeadAndTail(ty byte, b []byte) []byte {
 	by := []byte{0x68, 0x00, 0x01, 1 << 6, 89, 0x00, 0x00, ty, 0x00, 0x01}
 	by = append(by, b...)
 	crc := lib.CheckSum(by)
 	by = append(by, crc...)
+	return by
 }
 
 // BootNotificationRequest return the necessary bytes
@@ -61,6 +62,6 @@ func BootNotificationRequest() []byte {
 
 	result := GetBytes(str)
 
-	addHeadAndTail(0x01, result)
+	result = addHeadAndTail(0x01, result)
 	return result
 }
