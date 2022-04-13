@@ -83,3 +83,7 @@ func TrimRight(s string) string {
 	s = strings.Trim(s, "FF")
 	return s
 }
+
+func Int2Bytes(i int) []byte {
+	return []byte{byte(i >> 8), byte(i)}
+}
