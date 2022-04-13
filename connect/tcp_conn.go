@@ -77,3 +77,7 @@ func Server2() {
 //		}
 //	}()
 //}
+
+func hello() {
+	fmt.Println("hello")
+}
