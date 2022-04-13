@@ -60,7 +60,3 @@ func GenerateBytes(length int) string {
 	}
 	return str
 }
-
-func hello() {
-	fmt.Println("hello")
-}
