@@ -4,20 +4,36 @@ import (
 	"fmt"
 	"github.com/Kotodian/gokit/ac/lib"
 	"strconv"
+	"strings"
 )
 
 // String2Ascii change string to ascii
 func String2Ascii(s string) {
+	fmt.Println(s)
 	for i := 0; i < len(s); i++ {
 		result := int(s[i])
 		fmt.Printf("%X", result)
 	}
 }
 
+// Ascii2String change ascii to string
+func Ascii2String(by []byte) string {
+	var s string
+	for _, v := range by {
+		s += string(v)
+	}
+	return s
+}
+
+func StringAscii2String(s string) string {
+	s = TrimRight(s)
+	by := String2Bytes(s)
+	return Ascii2String(by)
+}
+
 // String2Bytes change string to bytes
 func String2Bytes(s string) []byte {
 	if len(s)%2 != 0 {
-		fmt.Println(len(s))
 		return nil
 	}
 	result := make([]byte, 0)
@@ -59,4 +75,10 @@ func GenerateBytes(length int) string {
 		str += "FF"
 	}
 	return str
+}
+
+// TrimRight return a string without FF
+func TrimRight(s string) string {
+	s = strings.Trim(s, "FF")
+	return s
 }
