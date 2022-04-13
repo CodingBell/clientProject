@@ -10,9 +10,13 @@ import (
 
 func main() {
 	//util.String2Ascii("898601YY8SSXXXXXXXXP")
-	Server2()
+
 	//result := util.BootNotificationRequest()
 	//fmt.Printf("%X", result)
+
+	//Server2()
+
+	util.GetStringLength("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
 }
 
 func Server2() {

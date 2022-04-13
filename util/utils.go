@@ -38,6 +38,7 @@ func GetBytes(str []string) []byte {
 	return result
 }
 
+// addHeadAndTail is a common function to add head and tail to the string
 func addHeadAndTail(ty byte, b []byte) []byte {
 	by := []byte{0x68, 0x00, 0x01, 1 << 6, 89, 0x00, 0x00, ty, 0x00, 0x01}
 	by = append(by, b...)
@@ -46,22 +47,16 @@ func addHeadAndTail(ty byte, b []byte) []byte {
 	return by
 }
 
-// BootNotificationRequest return the necessary bytes
-func BootNotificationRequest() []byte {
-	str := []string{
-		"5431363431373335323131",
-		"4A4F59534F4EFFFFFFFF",
-		"4A4F59534F4EFFFFFFFF",
-		"76312E302E31FFFF",
-		"3839383630335959584D48484858585858585850",
-		"303132333435363738393031323334",
-		"00",
-		"7F000001",
-		"31323334353637383930",
+// GetStringLength return the length of the input string
+func GetStringLength(s string) {
+	fmt.Println(len(s))
+}
+
+// GenerateBytes generate all FF string
+func GenerateBytes(length int) string {
+	var str string
+	for i := 0; i < length; i++ {
+		str += "FF"
 	}
-
-	result := GetBytes(str)
-
-	result = addHeadAndTail(0x01, result)
-	return result
+	return str
 }
