@@ -25,6 +25,7 @@ func Ascii2String(by []byte) string {
 	return s
 }
 
+// StringAscii2String input a ascii string and return the mapping string
 func StringAscii2String(s string) string {
 	s = TrimRight(s)
 	by := String2Bytes(s)
